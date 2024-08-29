@@ -1,15 +1,20 @@
-import { Client, Events, GatewayIntentBits } from "discord.js";
+import { BaseInteraction, Client, Events, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
-import { registerCommands } from "./scripts/register";
-import { BaseInteraction } from "discord.js";
-import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
+import { recordMemberRoles } from "./actions/RecordMemberRoles";
+import { syncRolesToMember } from "./actions/SyncRolesToMember";
 import { slashCommands } from "./commands";
+import { registerCommands } from "./scripts/register";
+import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
 
 dotenv.config();
 let commands: SlashCommandObject;
 
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildIntegrations],
+	intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildMembers,
+    ],
 });
 
 client.once(Events.ClientReady, async (client) => {
@@ -34,5 +39,8 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 		);
 	}
 });
+
+client.on("guildMemberAdd", syncRolesToMember)
+client.on("guildMemberUpdate", recordMemberRoles)
 
 client.login(process.env.TOKEN);
