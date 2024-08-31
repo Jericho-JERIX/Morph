@@ -6,6 +6,6 @@ export const Ping: SlashCommand = {
 	options: [],
 
 	async onCommandExecuted(interaction) {
-		console.log(interaction.member)
+		// console.log(interaction.member)
 	},
 };

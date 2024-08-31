@@ -5,6 +5,7 @@ import { syncRolesToMember } from "./actions/SyncRolesToMember";
 import { slashCommands } from "./commands";
 import { registerCommands } from "./scripts/register";
 import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
+import { syncRoleAsParent } from "./actions/SyncRolesAsParent";
 
 dotenv.config();
 let commands: SlashCommandObject;
@@ -42,5 +43,6 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 
 client.on("guildMemberAdd", syncRolesToMember)
 client.on("guildMemberUpdate", recordMemberRoles)
+client.on("guildMemberUpdate", syncRoleAsParent)
 
 client.login(process.env.TOKEN);

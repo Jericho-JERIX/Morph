@@ -1,5 +1,6 @@
 import { GuildMember, PartialGuildMember } from "discord.js";
 import { createOrUpdateMemberRoles } from "../service/MemberRole.service";
+import { getUserBindingParent, getUsersBindingGroup } from "../service/UserBinding.service";
 
 export async function recordMemberRoles(memberBefore: GuildMember | PartialGuildMember, memberAfter: GuildMember) {
     const memberBeforeRoles = memberBefore.roles.cache.map((role) => role.id)
