@@ -15,7 +15,7 @@ export async function syncRoleAsParent(memberBefore: GuildMember | PartialGuildM
     const parent = await getUserBindingParent(memberId)
 
     const guildSettings = await getGuildSettings(guildId)
-    if (!guildSettings || !guildSettings.enabledUserBindingGroup) return
+    if (!guildSettings || !guildSettings.allowedCollectData || !guildSettings.enabledUserBindingGroup) return
 
     if (!parent) return
     

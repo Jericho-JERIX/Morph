@@ -8,7 +8,7 @@ export async function syncRolesToMember(member: GuildMember) {
     const guildId = member.guild.id
 
     const guildSettings = await getGuildSettings(guildId)
-    if (!guildSettings || !guildSettings.enabledRolesRecovery) return
+    if (!guildSettings || !guildSettings.allowedCollectData || !guildSettings.enabledRolesRecovery) return
 
     const memberRoles = await getMemberRoles(guildId, memberId)
 

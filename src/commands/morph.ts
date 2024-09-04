@@ -2,6 +2,7 @@ import { GuildSettings } from "@prisma/client";
 import { SlashCommand } from "../scripts/types/SlashCommand";
 import { MorphServerSettingsMessage } from "../templates/messages/MorphServerSettingsMessage";
 import { allowCollectServerData, createGuildSettings, disallowCollectServerData, getGuildSettings, updateRolesRecovery, updateUserBindingGroup } from "../service/GuildSettings.service";
+import { uploadGuildMemberRoles } from "../actions/UploadGuildMembersRoles";
 
 export const Morph: SlashCommand = {
     name: "morph",
@@ -32,13 +33,16 @@ export const Morph: SlashCommand = {
     },
 
     async onButtonPressed(interaction) {
+
+        const guild = interaction.guild
         const guildId = interaction.guildId
 
-        if (!guildId) return
+        if (!guildId || !guild) return
 
         switch (interaction.customId) {
             case "allow-collect-data":
             case "re-upload-server-data":
+                await uploadGuildMemberRoles(guild)
                 await allowCollectServerData(guildId)
                 break
 
