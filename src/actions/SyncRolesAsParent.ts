@@ -2,20 +2,20 @@ import { GuildMember, PartialGuildMember } from "discord.js";
 import { createOrUpdateMemberRoles } from "../service/MemberRole.service";
 import { getUserBindingParent, getUsersBindingGroup } from "../service/UserBinding.service";
 import { store } from "../stores/SyncRoleAsParent.store";
+import { getGuildSettings } from "../service/GuildSettings.service";
 
 export async function syncRoleAsParent(memberBefore: GuildMember | PartialGuildMember, memberAfter: GuildMember) {
+    
     const memberBeforeRoles = memberBefore.roles.cache.map((role) => role.id)
-
-    // If update by bot, ignore
-    // console.log('syncRoleAsParent', memberAfter)
-    // return
-    console.log("Change")
 
     const guildId = memberAfter.guild.id
     const memberId = memberAfter.id
     const memberRoles = memberAfter.roles.cache.map((role) => role.id)
     const usersBindingGroup = await getUsersBindingGroup(memberId)
     const parent = await getUserBindingParent(memberId)
+
+    const guildSettings = await getGuildSettings(guildId)
+    if (!guildSettings || !guildSettings.enabledUserBindingGroup) return
 
     if (!parent) return
     
