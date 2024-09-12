@@ -66,6 +66,12 @@ export async function bulkCreateOrUpdateMemberRoles(payload: CreateMemberRole[])
     return Promise.all(queues)
 }
 
+export async function deleteGuildMemberRoles(guildId: string) {
+    return prisma.memberRole.deleteMany({
+        where: { guildId }
+    })
+}
+
 export async function updateMemberRoles(guildId: string, userId: string, roleIds: string[]) {
     return prisma.memberRole.update({
         where: { guildId_userId: { guildId, userId } },

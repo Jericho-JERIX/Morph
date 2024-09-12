@@ -6,6 +6,7 @@ import { slashCommands } from "./commands";
 import { registerCommands } from "./scripts/register";
 import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
 import { syncRoleAsParent } from "./actions/SyncRolesAsParent";
+import { responseUserBindingRequest } from "./actions/ResponseUserBindingRequest";
 
 dotenv.config();
 let commands: SlashCommandObject;
@@ -27,8 +28,9 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 	if (interaction.isChatInputCommand()) {
 		await commands[interaction.commandName].onCommandExecuted(interaction);
 	} else if (interaction.isButton()) {
+        if (!interaction.message.interaction) return
 		await commands[
-			String(interaction.message.interaction?.commandName)
+			String(interaction.message.interaction.commandName)
 		].onButtonPressed?.(interaction);
 	} else if (interaction.isStringSelectMenu()) {
 		await commands[
@@ -44,5 +46,6 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 client.on("guildMemberAdd", syncRolesToMember)
 client.on("guildMemberUpdate", recordMemberRoles)
 client.on("guildMemberUpdate", syncRoleAsParent)
+client.on("interactionCreate", responseUserBindingRequest)
 
 client.login(process.env.TOKEN);

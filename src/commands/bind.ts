@@ -1,6 +1,8 @@
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
-import { bindUserToTargetUser } from "../actions/BindUserToTargetUser";
+import { bindUserToTargetUser } from "../service/UserBinding.service";
+import { createUserBindingGroupRequest } from "../service/UserBindingGroupRequest.service";
+import { UserBindingRequestMessage } from "../templates/messages/UserBindingRequestMessage";
 
 export const Bind: SlashCommand = {
     name: "bind",
@@ -22,11 +24,19 @@ export const Bind: SlashCommand = {
         const userId = interaction.member.user.id
         const targetUserId = user.id
 
-        await bindUserToTargetUser(userId, targetUserId)
+        // await bindUserToTargetUser(userId, targetUserId)
+        const userBindingGroupRequest = await createUserBindingGroupRequest(userId, targetUserId)
+
+        const targetUser = await interaction.client.users.fetch(targetUserId)
+
+        const requestMessage = await targetUser.send(UserBindingRequestMessage({
+            userBindingGroupRequest, guildMember: interaction.member as GuildMember
+        }))
         
         await interaction.reply({
-            content: `Successfully binded <@${userId}> to <@${targetUserId}>`,
+            content: `Send request from <@${userId}> to <@${targetUserId}>`,
             ephemeral: true
         })
     },
+    
 }

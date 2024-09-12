@@ -3,6 +3,8 @@ import { SlashCommand } from "../scripts/types/SlashCommand";
 import { MorphServerSettingsMessage } from "../templates/messages/MorphServerSettingsMessage";
 import { allowCollectServerData, createGuildSettings, disallowCollectServerData, getGuildSettings, updateRolesRecovery, updateUserBindingGroup } from "../service/GuildSettings.service";
 import { uploadGuildMemberRoles } from "../actions/UploadGuildMembersRoles";
+import { deleteGuildMemberRoles } from "../service/MemberRole.service";
+import { GuildMember } from "discord.js";
 
 export const Morph: SlashCommand = {
     name: "morph",
@@ -36,8 +38,11 @@ export const Morph: SlashCommand = {
 
         const guild = interaction.guild
         const guildId = interaction.guildId
+        const member = interaction.member
 
-        if (!guildId || !guild) return
+        if (!guildId || !guild || !member) return
+
+        if (!(member as GuildMember).permissions.has("ManageRoles")) return
 
         switch (interaction.customId) {
             case "allow-collect-data":
@@ -47,6 +52,7 @@ export const Morph: SlashCommand = {
                 break
 
             case "disallow-collect-data":
+                await deleteGuildMemberRoles(guildId)
                 await disallowCollectServerData(guildId)
                 break
 

@@ -65,3 +65,14 @@ export async function getUsersBindingGroup(userId: string) {
         where: { parentUserId: parent.userId }
     })
 }
+
+export async function bindUserToTargetUser(userId: string, targetUserId: string) {
+    
+    let parentUser = await getUserBindingParent(targetUserId)
+    
+    if (!parentUser) {
+        parentUser = await createUserBindingParent(targetUserId)
+    }
+
+    return createUserBindingChild(userId, parentUser.userId)
+}
