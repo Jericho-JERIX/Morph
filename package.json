@@ -1,35 +1,39 @@
 {
-	"dependencies": {
-		"@prisma/client": "^5.19.0",
-		"axios": "^1.4.0",
-		"discord.js": "^14.10.2",
-		"dotenv": "^16.0.3"
-	},
-	"name": "morph",
-	"version": "1.0.0",
-	"main": "build/index.js",
-	"devDependencies": {
-		"@types/node": "^20.1.7",
-		"nodemon": "^2.0.22",
-		"prisma": "^5.19.0",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4"
-	},
-	"scripts": {
-		"build": "tsc",
-		"start": "node .",
-		"dev": "nodemon --config nodemon.json src/index.ts"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Jericho-JERIX/Docket-Bot.git"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/Jericho-JERIX/Docket-Bot/issues"
-	},
-	"homepage": "https://github.com/Jericho-JERIX/Docket-Bot#readme",
-	"description": ""
+  "dependencies": {
+    "@prisma/client": "^5.19.0",
+    "axios": "^1.4.0",
+    "discord.js": "^14.10.2",
+    "dotenv": "^16.0.3"
+  },
+  "name": "morph",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "@types/node": "^20.1.7",
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.22",
+    "prisma": "^5.19.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node .",
+    "dev": "nodemon --config nodemon.json src/index.ts",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jericho-JERIX/Docket-Bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jericho-JERIX/Docket-Bot/issues"
+  },
+  "homepage": "https://github.com/Jericho-JERIX/Docket-Bot#readme",
+  "description": ""
 }
