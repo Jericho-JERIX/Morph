@@ -1,5 +1,6 @@
+import { UserBindingGroup } from "@prisma/client"
 import { prisma } from "../../database/prisma"
-import { bindUserToTargetUser, getUserBindingData } from "../../service/UserBinding.service"
+import { bindUserToTargetUser, getUserBindingData, getUsersBindingGroup, removeUserFromUserBindingGroup } from "../../service/UserBinding.service"
 
 const addUserTestcases = [
     { userId: '1', targetUserId: '2', expected: { user: { isParent: true, parentUserId: '1' }, targetUser: { isParent: false, parentUserId: '1' }}},
@@ -12,6 +13,10 @@ const addUserTestcases = [
     { userId: '22', targetUserId: '33', expected: { user: { isParent: false, parentUserId: '11' }, targetUser: { isParent: false, parentUserId: '11' }}},
     { userId: '33', targetUserId: '44', expected: { user: { isParent: false, parentUserId: '11' }, targetUser: { isParent: false, parentUserId: '11' }}},
 ]
+
+beforeAll(async () => {
+    await prisma.userBindingGroup.deleteMany()
+})
 
 afterAll(async () => {
     await prisma.userBindingGroup.deleteMany()
@@ -43,4 +48,44 @@ describe(('UserBindingSercvice'), () => {
             expect(wasParent?.isParent).toEqual(false)
         })
     })
+
+    describe('Remove user from User Binding Group', () => {
+        it('Remove user 2', async () => {
+            await removeUserFromUserBindingGroup('2')
+            const users = await getUsersBindingGroup('1')
+            const userIds = users.map(user => user.userId)
+            expect(userIds).not.toContain('2')
+        })
+        it('Remove user 1, ID 3 should be parent', async () => {
+            await removeUserFromUserBindingGroup('1')
+            const newParent = await getUserBindingData('3')
+            expect(newParent?.isParent).toBe(true)
+            const users = await getUsersBindingGroup('3')
+            
+            for (const user of users) {
+                expect(user.parentUserId).toEqual('3')
+            }
+        })
+        it('Remove whole tree', async () => {
+            await bindUserToTargetUser('111', '222')
+            await bindUserToTargetUser('111', '333')
+    
+            let user: UserBindingGroup | null;
+
+            await removeUserFromUserBindingGroup('111')
+            user = await getUserBindingData('111')
+            expect(user).toBeNull()
+
+            await removeUserFromUserBindingGroup('222')
+            user = await getUserBindingData('222')
+            expect(user).toBeNull()
+
+            await removeUserFromUserBindingGroup('333')
+            user = await getUserBindingData('333')
+            expect(user).toBeNull()
+    
+        })
+    })
+
+    
 })
