@@ -32,26 +32,25 @@ export async function createUserBindingChild(userId: string, parentUserId: strin
     })
 }
 
-export async function removeUserBindingUser(userId: string) {
+export async function removeUserFromUserBindingGroup(userId: string) {
     
     const user = await prisma.userBindingGroup.findUnique({ where: { userId } })
 
     if (!user) return null
     
     if (user.isParent) {
-        const child = await prisma.userBindingGroup.findFirst({
-            where: { parentUserId: userId }
+
+        const newParent = await prisma.userBindingGroup.findFirstOrThrow({
+            where: { parentUserId: user.userId, isParent: false }
         })
-        if (!child) {
-            return prisma.userBindingGroup.delete({ where: { userId } })
-        }
-        return prisma.userBindingGroup.update({
-            where: { userId: child.userId },
-            data: {
-                isParent: true
-            }
+
+        await prisma.userBindingGroup.updateMany({
+            where: { parentUserId: user.userId },
+            data: { parentUserId: newParent.userId }
         })
     }
+    
+    return prisma.userBindingGroup.delete({ where: { userId } })
 
 }
 
