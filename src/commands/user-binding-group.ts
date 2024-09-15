@@ -8,6 +8,10 @@ export const UserBindingGroup: SlashCommand = {
 
 	async onCommandExecuted(interaction) {
 		const bindingGroup = await getUsersBindingGroup(interaction.user.id);
-        const a = interaction.guild?.members.cache.get(bindingGroup[0].userId)
+        const message = bindingGroup.map((account) => `<@${account.userId}>`)
+        await interaction.reply({
+            content: message.join(" "),
+            ephemeral: true
+        })
 	},
 };
