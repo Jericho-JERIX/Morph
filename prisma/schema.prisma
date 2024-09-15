@@ -21,6 +21,12 @@ model GuildSettings {
     updatedAt                       DateTime    @updatedAt
 }
 
+model DiscordAccount {
+    id                  Int         @id @default(autoincrement())
+    userId              String      @unique
+    username            String      @unique
+}
+
 model MemberRole {
     id                  Int         @id @default(autoincrement())
     guildId             String

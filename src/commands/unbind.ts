@@ -1,39 +1,30 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
-import { getUsersBindingGroup } from "../service/UserBinding.service";
+import { getUsersBindingGroup, removeUserFromUserBindingGroup } from "../service/UserBinding.service";
+import { ManageUserBindingGroupMemberMessage } from "../templates/messages/ManageUserBindingGroupMemberMessage";
 
 export const Unbind: SlashCommand = {
 	name: "unbind",
 	description: "Shows the user binding group of the user.",
 	options: [
         {
-            name: "user",
-            description: "The user to unbind",
+            name: "user-id",
+            description: "Target user ID you wished to unbind.",
             type: ApplicationCommandOptionType.String,
             required: true,
-            autocomplete: true
         }
     ],
 
 	async onCommandExecuted(interaction) {
-        await interaction.reply({
-            content: "Done",
-            ephemeral: true
-        })
+
+        const userId = interaction.options.getString("user-id");
+
+        if (!userId) return
+
+        await removeUserFromUserBindingGroup(userId);
+
+        const message = await ManageUserBindingGroupMemberMessage({ userId: interaction.user.id });
+        await interaction.reply(message)
 	},
     
-    async onAutoCompleteInputed(interaction) {
-        const bindingGroup = await getUsersBindingGroup(interaction.user.id);
-        const query = interaction.options.getFocused();
-        
-        const choices = bindingGroup.map((account) => {
-            const discordAccount = interaction.client.users.cache.get(account.userId)
-            console.log(discordAccount)
-            return {
-                name: discordAccount ? discordAccount.username : `@${account.userId}`,
-                value: account.userId
-            }
-        }).filter((account) => query === '' || account.name.toLowerCase().includes(query.toLowerCase()))
-        await interaction.respond(choices)
-    }
 };

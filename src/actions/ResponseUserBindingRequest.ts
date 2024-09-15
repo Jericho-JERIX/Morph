@@ -1,5 +1,6 @@
 import { BaseInteraction } from "discord.js";
 import { acceptUserBindingGroupRequest, rejectUserBindingGroupRequest } from "../service/UserBindingGroupRequest.service";
+import { ManageUserBindingGroupMemberMessage } from "../templates/messages/ManageUserBindingGroupMemberMessage";
 
 export async function responseUserBindingRequest(interaction: BaseInteraction) {
 
@@ -10,24 +11,40 @@ export async function responseUserBindingRequest(interaction: BaseInteraction) {
     
     switch (method) {
         case "accept-user-binding":
-            await acceptUserBindingGroupRequest(id)
-            await interaction.update({
-                content: "Accept!",
-                components: [],
-                embeds: []
+            const acceptedRequest = await acceptUserBindingGroupRequest(id)
+
+            if (!acceptedRequest.user) return
+
+            const userBindingGroupMessage = await ManageUserBindingGroupMemberMessage({ userId: acceptedRequest.user.userId })
+            const acceptRequester = await interaction.client.users.fetch(acceptedRequest.user.userId)
+
+            await acceptRequester.send({
+                ...userBindingGroupMessage,
+                content: `Your request to bind with <@${acceptedRequest.targetUser?.userId}> has been accepted!`
             })
-            return
+
+            await interaction.update({
+                ...userBindingGroupMessage,
+                content: `Your request to bind with <@${acceptedRequest.user?.userId}> has been accepted!`,
+                components: [],
+            })
         
         case "reject-user-binding":
-            await rejectUserBindingGroupRequest(id)
+            const rejectedRequest = await rejectUserBindingGroupRequest(id)
+            if (!rejectedRequest) return
+
+            const rejectRequester = await interaction.client.users.fetch(rejectedRequest.userId)
+            rejectRequester.send({
+                content: `Your request to bind with <@${rejectedRequest.targetUserId}> has been rejected!`
+            })
+
             await interaction.update({
-                content: "Reject!",
+                content: `Your request to bind with <@${rejectedRequest.userId}> has been rejected!`,
                 components: [],
                 embeds: []
             })
-            return
     }
 
-    
+    // DM to the 
 
 }

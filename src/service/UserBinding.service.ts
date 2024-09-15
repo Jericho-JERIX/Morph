@@ -36,7 +36,6 @@ export async function createUserBindingChild(userId: string, parentUserId: strin
 export async function removeUserFromUserBindingGroup(userId: string) {
     
     const user = await prisma.userBindingGroup.findUnique({ where: { userId } })
-
     if (!user) return null
     
     if (user.isParent) {

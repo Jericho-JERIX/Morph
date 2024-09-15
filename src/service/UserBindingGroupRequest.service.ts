@@ -10,6 +10,19 @@ export async function createUserBindingGroupRequest(userId: string, targetUserId
     });
 }
 
+export async function getUserBindingGroupRequests(userId: string, filter?: Record<string, any>) {
+    console.log('where', {
+        userId,
+        ...filter,
+    })
+    return prisma.userBindingGroupRequest.findMany({
+        where: {
+            userId,
+            ...filter,
+        },
+    });
+}
+
 export async function acceptUserBindingGroupRequest(id: number) {
     
     const userBindingGroupRequest = await prisma.userBindingGroupRequest.update({

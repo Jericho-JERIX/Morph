@@ -1,18 +1,22 @@
-import { UserBindingGroup } from "@prisma/client";
+import { UserBindingGroup, UserBindingGroupRequest } from "@prisma/client";
 import { GuildMember } from "discord.js";
-import { UserBindingCardEmbed } from "../components/Embeds/UserBindingCardEmbed";
+import { UserBindingGroupListEmbed } from "../components/Embeds/UserBindingGroupListEmbed";
 import { UserBindingManageButtonRow } from "../components/ButtonRows/UserBindingManageButtonRow";
+import { getUsersBindingGroup } from "../../service/UserBinding.service";
+import { getUserBindingGroupRequests } from "../../service/UserBindingGroupRequest.service";
 
-export function ManageUserBindingGroupMemberMessage({
-    guildMember,
-    userBindingGroup,
+export async function ManageUserBindingGroupMemberMessage({
+    userId,
 }: {
-    guildMember: GuildMember;
-    userBindingGroup: UserBindingGroup;
+    userId: string;
 }) {
+
+    const userBindingGroupList = await getUsersBindingGroup(userId);
+    const userBindingGroupPendingRequestList = await getUserBindingGroupRequests(userId, { status: "pending" });
+
     return {
         embeds: [
-            UserBindingCardEmbed({ guildMember, userBindingGroup })
+            UserBindingGroupListEmbed({ userBindingGroupList, userBindingGroupPendingRequestList })
         ],
         components: [
             UserBindingManageButtonRow()
