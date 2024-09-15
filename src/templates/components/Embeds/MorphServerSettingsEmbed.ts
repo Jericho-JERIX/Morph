@@ -1,5 +1,6 @@
 import { GuildSettings } from "@prisma/client";
 import { EmbedBuilder } from "discord.js";
+import { PrimaryColor } from "../../../constants/Color.constant";
 
 interface MorphServerSettingsEmbedProps {
     guildSettings: GuildSettings
@@ -24,6 +25,7 @@ function EnableStatus(guildSettings: GuildSettings, enabled: boolean) {
 export function MorphServerSettingsEmbed({ guildSettings }: MorphServerSettingsEmbedProps): EmbedBuilder {
     return new EmbedBuilder()
         .setTitle("Morph Server Settings")
+        .setColor(PrimaryColor)
         .addFields([
             {
                 name: "Allow Morph to Collect Server Data",

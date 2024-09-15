@@ -1,5 +1,6 @@
 import { UserBindingGroup, UserBindingGroupRequest } from "@prisma/client";
 import { EmbedBuilder, GuildMember } from "discord.js";
+import { PrimaryColor } from "../../../constants/Color.constant";
 
 export function UserBindingGroupListEmbed({
     userBindingGroupList,
@@ -20,6 +21,7 @@ export function UserBindingGroupListEmbed({
 
     return new EmbedBuilder()
         .setTitle("User Binding Group")
+        .setColor(PrimaryColor)
         .addFields({
             name: "User",
             value: [...userList, ...userPendingList].join("\n"),
