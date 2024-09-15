@@ -35,6 +35,7 @@ model MemberRole {
 model UserBindingGroup {
     id                  Int         @id @default(autoincrement())
     userId              String      @unique
+    username            String      @unique
     parentUserId        String
     isParent            Boolean     @default(false)
     request             UserBindingGroupRequest?
@@ -45,7 +46,9 @@ model UserBindingGroup {
 model UserBindingGroupRequest {
     id                  Int                 @id @default(autoincrement())
     userId              String
+    username            String
     targetUserId        String
+    targetUsername      String
     status              String              @default("pending")
     userBindingGroup    UserBindingGroup?   @relation(fields: [userBindingGroupId], references: [id])
     userBindingGroupId  Int?                @unique

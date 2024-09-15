@@ -1,4 +1,6 @@
+import { UserBindingGroup } from "@prisma/client";
 import { prisma } from "../database/prisma";
+import { CreateUserBindingAccount } from "../types/UserBindingGroup.type";
 
 export async function getUserBindingParent(userId: string) {
     const user = await prisma.userBindingGroup.findUnique({
@@ -14,20 +16,24 @@ export async function getUserBindingParent(userId: string) {
 
 }
 
-export async function createUserBindingParent(userId: string) {
+export async function createUserBindingParent(user: CreateUserBindingAccount) {
+    const { userId, username } = user
     return prisma.userBindingGroup.create({
         data: {
             userId,
+            username,
             parentUserId: userId,
             isParent: true
         }
     })
 }
 
-export async function createUserBindingChild(userId: string, parentUserId: string) {
+export async function createUserBindingChild(parentUserId: string, user: CreateUserBindingAccount) {
+    const { userId, username } = user
     return prisma.userBindingGroup.create({
         data: {
             userId,
+            username,
             parentUserId
         }
     })
@@ -81,41 +87,44 @@ export async function getUsersBindingGroup(userId: string) {
     })
 }
 
-export async function bindUserToTargetUser(userId: string, targetUserId: string) {
+export async function bindUserToTargetUser(user: CreateUserBindingAccount, targetUser: CreateUserBindingAccount) {
 
-    let user = await prisma.userBindingGroup.findUnique({ where: { userId } })
-    let targetUser = await prisma.userBindingGroup.findUnique({ where: { userId: targetUserId } })
+    const { userId, username } = user
+    const { userId: targetUserId } = targetUser
+
+    let userBindingGroup = await prisma.userBindingGroup.findUnique({ where: { userId } })
+    let targetUserBindingGroup = await prisma.userBindingGroup.findUnique({ where: { userId: targetUserId } })
 
     // If both users have never been in database before: User is parent and target user is child
-    if (!user && !targetUser) {
-        await createUserBindingParent(userId)
-        await createUserBindingChild(targetUserId, userId)
+    if (!userBindingGroup && !targetUserBindingGroup) {
+        await createUserBindingParent(user)
+        await createUserBindingChild(userId, targetUser)
     }
 
     // If user already has a tree, then the target user will be new child of that tree
-    else if (user && !targetUser) {
-        await createUserBindingChild(targetUserId, user.parentUserId)
+    else if (userBindingGroup && !targetUserBindingGroup) {
+        await createUserBindingChild(userBindingGroup.parentUserId, targetUser)
     }
 
     // If target user already has a tree, then the user will be new child of that tree
-    else if (!user && targetUser) {
-        await createUserBindingChild(userId, targetUser.parentUserId)
+    else if (!userBindingGroup && targetUserBindingGroup) {
+        await createUserBindingChild(targetUserBindingGroup.parentUserId, user)
     }
 
     // If both users have a tree, then the target user tree will be merged into the one tree of the user's parent
-    else if (user && targetUser) {
+    else if (userBindingGroup && targetUserBindingGroup) {
 
-        if (user.parentUserId === targetUser.parentUserId) return { user, targetUser }
+        if (userBindingGroup.parentUserId === targetUserBindingGroup.parentUserId) return { user: userBindingGroup, targetUser: targetUserBindingGroup }
 
         await prisma.userBindingGroup.updateMany({
-            where: { parentUserId: targetUser.parentUserId },
-            data: { parentUserId: user.parentUserId, isParent: false }
+            where: { parentUserId: targetUserBindingGroup.parentUserId },
+            data: { parentUserId: userBindingGroup.parentUserId, isParent: false }
         })
     }
 
-    user = await prisma.userBindingGroup.findUnique({ where: { userId } })
-    targetUser = await prisma.userBindingGroup.findUnique({ where: { userId: targetUserId } })
+    userBindingGroup = await prisma.userBindingGroup.findUnique({ where: { userId } })
+    targetUserBindingGroup = await prisma.userBindingGroup.findUnique({ where: { userId: targetUserId } })
 
-    return { user, targetUser }
+    return { user: userBindingGroup, targetUser: targetUserBindingGroup }
 
 }

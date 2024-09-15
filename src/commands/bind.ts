@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
-import { bindUserToTargetUser } from "../service/UserBinding.service";
 import { createUserBindingGroupRequest } from "../service/UserBindingGroupRequest.service";
 import { UserBindingRequestMessage } from "../templates/messages/UserBindingRequestMessage";
 
@@ -22,6 +21,7 @@ export const Bind: SlashCommand = {
         if (!user || !interaction.member) return
         
         const userId = interaction.member.user.id
+        const userName = interaction.member.user.username
         const targetUserId = user.id
 
         const userBindingGroupRequest = await createUserBindingGroupRequest(userId, targetUserId)

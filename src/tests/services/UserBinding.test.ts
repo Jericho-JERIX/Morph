@@ -1,6 +1,7 @@
 import { UserBindingGroup } from "@prisma/client"
 import { prisma } from "../../database/prisma"
 import { bindUserToTargetUser, getUserBindingData, getUsersBindingGroup, removeUserFromUserBindingGroup } from "../../service/UserBinding.service"
+import { CreateUserBindingAccount } from "../../types/UserBindingGroup.type"
 
 const addUserTestcases = [
     { userId: '1', targetUserId: '2', expected: { user: { isParent: true, parentUserId: '1' }, targetUser: { isParent: false, parentUserId: '1' }}},
@@ -14,9 +15,10 @@ const addUserTestcases = [
     { userId: '33', targetUserId: '44', expected: { user: { isParent: false, parentUserId: '11' }, targetUser: { isParent: false, parentUserId: '11' }}},
 ]
 
-beforeAll(async () => {
-    await prisma.userBindingGroup.deleteMany()
-})
+function cuba(id: string): CreateUserBindingAccount {
+    const randomString = Math.random().toString(36).substring(7)
+    return { userId: id, username: randomString }
+}
 
 afterAll(async () => {
     await prisma.userBindingGroup.deleteMany()
@@ -26,7 +28,7 @@ describe(('UserBindingSercvice'), () => {
     describe('Bind user to target user', () => {
         it.each(addUserTestcases)(`Bind user $userId to Target user $targetUserId`, async (testcase) => {
 
-            const result = await bindUserToTargetUser(testcase.userId, testcase.targetUserId)
+            const result = await bindUserToTargetUser(cuba(testcase.userId), cuba(testcase.targetUserId))
 
             expect(result.user?.isParent).toEqual(testcase.expected.user.isParent)
             expect(result.user?.parentUserId).toEqual(testcase.expected.user.parentUserId)
@@ -34,7 +36,7 @@ describe(('UserBindingSercvice'), () => {
             expect(result.targetUser?.parentUserId).toEqual(testcase.expected.targetUser.parentUserId)
         })
         it('Merge tree 11 to 1', async () => {
-            const result = await bindUserToTargetUser('3', '33')
+            const result = await bindUserToTargetUser(cuba('3'), cuba('33'))
 
             expect(result.user?.isParent).toEqual(false)
             expect(result.user?.parentUserId).toEqual('1')
@@ -67,8 +69,8 @@ describe(('UserBindingSercvice'), () => {
             }
         })
         it('Remove whole tree', async () => {
-            await bindUserToTargetUser('111', '222')
-            await bindUserToTargetUser('111', '333')
+            await bindUserToTargetUser(cuba('111'), cuba('222'))
+            await bindUserToTargetUser(cuba('111'), cuba('333'))
     
             let user: UserBindingGroup | null;
 

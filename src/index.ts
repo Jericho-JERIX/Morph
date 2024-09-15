@@ -25,6 +25,7 @@ client.once(Events.ClientReady, async (client) => {
 });
 
 client.on("interactionCreate", async (interaction: BaseInteraction) => {
+    console.log('interaction')
 	if (interaction.isChatInputCommand()) {
 		await commands[interaction.commandName].onCommandExecuted(interaction);
 	} else if (interaction.isButton()) {
@@ -37,6 +38,7 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 			String(interaction.message.interaction?.commandName)
 		].onMenuSelected?.(interaction);
 	} else if (interaction.isAutocomplete()) {
+        console.log('autocomplete')
 		await commands[String(interaction.commandName)].onAutoCompleteInputed?.(
 			interaction
 		);
