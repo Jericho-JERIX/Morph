@@ -8,6 +8,7 @@ export function UserBindingRequestEmbed({
 }) {
     return new EmbedBuilder()
         .setColor(PrimaryColor)
-        .setAuthor({ name: "User Binding Request" || user.defaultAvatarURL })
+        .setThumbnail(user.displayAvatarURL())
+        .setAuthor({ name: "User Binding Request" })
         .setDescription(`You have received a binding request from <@${user.id}>.`)
 }
