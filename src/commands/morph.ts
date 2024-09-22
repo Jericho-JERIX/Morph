@@ -47,8 +47,8 @@ export const Morph: SlashCommand = {
         switch (interaction.customId) {
             case "allow-collect-data":
             case "re-upload-server-data":
-                await uploadGuildMemberRoles(guild)
                 await allowCollectServerData(guildId)
+                uploadGuildMemberRoles(guild)
                 break
 
             case "disallow-collect-data":
