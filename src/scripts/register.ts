@@ -1,7 +1,6 @@
 import { REST, Routes } from "discord.js";
-import { Ping } from "../commands/ping";
-import { SlashCommand } from "./types/SlashCommand";
 import * as dotenv from "dotenv";
+import { SlashCommand } from "./types/SlashCommand";
 import { SlashCommandObject } from "./types/SlashCommandObject";
 
 dotenv.config();
