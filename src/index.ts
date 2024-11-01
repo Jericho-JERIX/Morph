@@ -7,6 +7,8 @@ import { registerCommands } from "./scripts/register";
 import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
 import { syncRoleAsParent } from "./actions/SyncRolesAsParent";
 import { responseUserBindingRequest } from "./actions/ResponseUserBindingRequest";
+import { handleGuildMemberAdd } from "./events/HandleGuildMemberAdd";
+import { handleGuildMemberUpdate } from "./events/HandleGuildMemberUpdate";
 
 dotenv.config();
 let commands: SlashCommandObject;
@@ -43,9 +45,8 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 	}
 });
 
-client.on("guildMemberAdd", syncRolesToMember)
-client.on("guildMemberUpdate", recordMemberRoles)
-client.on("guildMemberUpdate", syncRoleAsParent)
+client.on("guildMemberAdd", handleGuildMemberAdd)
+client.on("guildMemberUpdate", handleGuildMemberUpdate)
 client.on("interactionCreate", responseUserBindingRequest)
 
 client.login(process.env.TOKEN);
