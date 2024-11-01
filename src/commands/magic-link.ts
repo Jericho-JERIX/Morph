@@ -1,51 +1,32 @@
-import { ApplicationCommandOptionType, GuildMember } from "discord.js";
 import { SlashCommand } from "../scripts/types/SlashCommand";
-import { bindUserToTargetUser } from "../service/UserBinding.service";
-import { createUserBindingGroupRequest } from "../service/UserBindingGroupRequest.service";
-import { UserBindingRequestMessage } from "../templates/messages/UserBindingRequestMessage";
-import { createMagicLink } from "../service/MagicLink.service";
+import { getMagicLinkListByCodeList } from "../service/MagicLink.service";
+import { GuildMagicLinkListEmbed } from "../templates/components/Embeds/GuildMagicLinkListEmbed";
 
 export const MagicLink: SlashCommand = {
-    name: "magic-link",
-    description: "Create a magic link",
-    options: [
-        {
-            name: "invitation-link",
-            description: "Paste this Discord server's invitation link here",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        },
-        {
-            name: "role",
-            description: "The role to give to the user when they join with this link",
-            type: ApplicationCommandOptionType.Role,
-            required: true,
-        },
-    ],
+	name: "magic-link",
+	description: "View a magic links",
+	options: [],
 
-    async onCommandExecuted(interaction) {
-        const invitationLink = interaction.options.getString("invitation-link")
-        const role = interaction.options.getRole("role")
+	async onCommandExecuted(interaction) {
+		if (!interaction.guild) {
+			interaction.reply({
+				content: "Invalid command usage",
+				ephemeral: true,
+			});
+			return;
+		}
 
-        if (!interaction.guildId || !invitationLink || !role) {
-            interaction.reply({
-                content: "Invalid command usage",
-                ephemeral: true
-            })
-            return;
-        }
+		const currentInvitationLinkList =
+			await interaction.guild.invites.fetch();
+		const currentCodeList = currentInvitationLinkList.map(
+			(invite) => invite.code
+		);
 
-        await createMagicLink({
-            guildId: interaction.guildId,
-            userId: interaction.user.id,
-            code: invitationLink.slice(19),
-            invitationLink: invitationLink,
-            roleId: role.id
-        })
+		const magicLinkList = await getMagicLinkListByCodeList(currentCodeList);
 
-        await interaction.reply({
-            content: "Magic link created!",
-        })
-    },
-    
-}
+		await interaction.reply({
+			content: "Magic link created!",
+			embeds: [GuildMagicLinkListEmbed({ magicLinkList })],
+		});
+	},
+};

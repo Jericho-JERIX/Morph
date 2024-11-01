@@ -25,3 +25,13 @@ export async function getMagicLinkByCode(code: string) {
         }
     })
 }
+
+export async function getMagicLinkListByCodeList(codeList: string[]) {
+    return prisma.magicLink.findMany({
+        where: {
+            code: {
+                in: codeList
+            }
+        }
+    })
+}
