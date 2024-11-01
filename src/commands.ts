@@ -1,4 +1,5 @@
 import { Bind } from "./commands/bind";
+import { MagicLink } from "./commands/magic-link";
 import { Morph } from "./commands/morph";
 import { Unbind } from "./commands/unbind";
 import { UploadGuildMembersRoles } from "./commands/upload-guild-members-roles";
@@ -11,4 +12,5 @@ export const slashCommands: SlashCommand[] = [
 	UploadGuildMembersRoles,
     Morph,
     UserBindingGroup,
+    MagicLink,
 ];
