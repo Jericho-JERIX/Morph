@@ -1,14 +1,13 @@
+import InvitesTracker from "@androz2091/discord-invites-tracker";
 import { BaseInteraction, Client, Events, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
-import { recordMemberRoles } from "./actions/RecordMemberRoles";
-import { syncRolesToMember } from "./actions/SyncRolesToMember";
-import { slashCommands } from "./commands";
-import { registerCommands } from "./scripts/register";
-import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
-import { syncRoleAsParent } from "./actions/SyncRolesAsParent";
 import { responseUserBindingRequest } from "./actions/ResponseUserBindingRequest";
+import { slashCommands } from "./commands";
 import { handleGuildMemberAdd } from "./events/HandleGuildMemberAdd";
 import { handleGuildMemberUpdate } from "./events/HandleGuildMemberUpdate";
+import { handleTrackerGuildMemberAdd } from "./events/HandleTrackerGuildMemberAdd";
+import { registerCommands } from "./scripts/register";
+import { SlashCommandObject } from "./scripts/types/SlashCommandObject";
 
 dotenv.config();
 let commands: SlashCommandObject;
@@ -19,6 +18,12 @@ const client = new Client({
         GatewayIntentBits.GuildIntegrations,
         GatewayIntentBits.GuildMembers,
     ],
+});
+
+const tracker = InvitesTracker.init(client, {
+    fetchGuilds: true,
+    fetchVanity: true,
+    fetchAuditLogs: true
 });
 
 client.once(Events.ClientReady, async (client) => {
@@ -44,6 +49,8 @@ client.on("interactionCreate", async (interaction: BaseInteraction) => {
 		);
 	}
 });
+
+tracker.on("guildMemberAdd", handleTrackerGuildMemberAdd)
 
 client.on("guildMemberAdd", handleGuildMemberAdd)
 client.on("guildMemberUpdate", handleGuildMemberUpdate)
