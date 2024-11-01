@@ -28,6 +28,7 @@ export async function responseUserBindingRequest(interaction: BaseInteraction) {
                 content: `Your request to bind with <@${acceptedRequest.user?.userId}> has been accepted!`,
                 components: [],
             })
+            break
         
         case "reject-user-binding":
             const rejectedRequest = await rejectUserBindingGroupRequest(id)
@@ -43,8 +44,7 @@ export async function responseUserBindingRequest(interaction: BaseInteraction) {
                 components: [],
                 embeds: []
             })
+            break
     }
-
-    // DM to the 
 
 }
