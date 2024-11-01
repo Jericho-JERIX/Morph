@@ -14,9 +14,12 @@ export async function ManageUserBindingGroupMemberMessage({
     const userBindingGroupList = await getUsersBindingGroup(userId);
     const userBindingGroupPendingRequestList = await getUserBindingGroupRequests(userId, { status: "pending" });
 
+    console.log(userBindingGroupList);
+    console.log(userBindingGroupPendingRequestList);
+
     return {
         embeds: [
-            UserBindingGroupListEmbed({ userBindingGroupList, userBindingGroupPendingRequestList })
+            UserBindingGroupListEmbed({ userId, userBindingGroupList, userBindingGroupPendingRequestList })
         ],
         components: [
             UserBindingManageButtonRow()

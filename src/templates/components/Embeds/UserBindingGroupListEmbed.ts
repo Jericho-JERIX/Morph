@@ -1,22 +1,33 @@
 import { UserBindingGroup, UserBindingGroupRequest } from "@prisma/client";
-import { EmbedBuilder, GuildMember } from "discord.js";
+import { EmbedBuilder, GuildMember, User } from "discord.js";
 import { PrimaryColor } from "../../../constants/Color.constant";
 
 export function UserBindingGroupListEmbed({
+    userId,
     userBindingGroupList,
     userBindingGroupPendingRequestList
 }: {
+    userId: string;
     userBindingGroupList: UserBindingGroup[];
     userBindingGroupPendingRequestList: UserBindingGroupRequest[];
 }) {
 
-    const userList = userBindingGroupList.map((userBindingGroup) => `<@${userBindingGroup.userId}>`);
+    let userList: string[] = [];
+    let statusList: string[] = [];
+    let userIdList: string[] = [];
+
+    if (userBindingGroupList.length > 0) {
+        userList = userBindingGroupList.map((userBindingGroup) => `<@${userBindingGroup.userId}>`);
+        statusList = userBindingGroupList.map(() => "Active");
+        userIdList = userBindingGroupList.map((userBindingGroup) => `\`${userBindingGroup.userId}\``);
+    } else {
+        userList = [`<@${userId}>`];
+        statusList = ["Active"];
+        userIdList = [userId];
+    }
+    
     const userPendingList = userBindingGroupPendingRequestList.map((userBindingGroup) => `<@${userBindingGroup.targetUserId}>`);
-
-    const statusList = userBindingGroupList.map(() => "Active");
     const statusPendingList = userBindingGroupPendingRequestList.map(() => "Pending");
-
-    const userIdList = userBindingGroupList.map((userBindingGroup) => `\`${userBindingGroup.userId}\``);
     const userPendingIdList = userBindingGroupPendingRequestList.map((userBindingGroup) => `\`${userBindingGroup.targetUserId}\``);
 
     return new EmbedBuilder()
