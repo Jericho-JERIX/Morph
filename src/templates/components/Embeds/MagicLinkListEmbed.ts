@@ -1,19 +1,29 @@
+import { MagicLink } from "@prisma/client";
 import { EmbedBuilder } from "discord.js";
 import { PrimaryColor } from "../../../constants/Color.constant";
-import { MagicLink } from "@prisma/client";
 
-export function GuildMagicLinkListEmbed({
+export function MagicLinkListEmbed({
+	title,
+	description,
 	magicLinkList = [],
 }: {
+	title: string;
+	description: string;
 	magicLinkList: MagicLink[];
 }) {
-
-    const invitationLinkColumn = magicLinkList.map(magicLink => magicLink.invitationLink)
-    const codeColumn = magicLinkList.map(magicLink => `\`${magicLink.code}\``)
-    const roleColumn = magicLinkList.map(magicLink => `<@&${magicLink.roleId}>`)
+	const invitationLinkColumn = magicLinkList.map(
+		(magicLink) => magicLink.invitationLink
+	);
+	const codeColumn = magicLinkList.map(
+		(magicLink) => `\`${magicLink.code}\``
+	);
+	const roleColumn = magicLinkList.map(
+		(magicLink) => `<@&${magicLink.roleId}>`
+	);
 
 	return new EmbedBuilder()
-		.setTitle("Magic Link List")
+		.setTitle(title)
+		.setDescription(description)
 		.setColor(PrimaryColor)
 		.addFields(
 			{

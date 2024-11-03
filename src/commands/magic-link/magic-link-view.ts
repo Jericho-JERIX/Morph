@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder } from "discord.js";
 import { SlashCommandSubcommand } from "../../scripts/types/SlashCommand";
 import { getMagicLinkListByCodeList } from "../../service/MagicLink.service";
-import { GuildMagicLinkListEmbed } from "../../templates/components/Embeds/GuildMagicLinkListEmbed";
+import { MagicLinkListEmbed } from "../../templates/components/Embeds/MagicLinkListEmbed";
 
 export const MagicLinkViewSubcommand: SlashCommandSubcommand = {
 	slashCommandBuilder: new SlashCommandSubcommandBuilder()
@@ -26,8 +26,11 @@ export const MagicLinkViewSubcommand: SlashCommandSubcommand = {
 		const magicLinkList = await getMagicLinkListByCodeList(currentCodeList);
 
 		await interaction.reply({
-			content: "Magic link created!",
-			embeds: [GuildMagicLinkListEmbed({ magicLinkList })],
+			embeds: [MagicLinkListEmbed({  
+                title: "Magic Link List",
+                description: "Whenever a user joins the server using the any invitation link below, they will be automatically assigned the role according to the link.",
+                magicLinkList
+            })],
 		});
 	},
 };
