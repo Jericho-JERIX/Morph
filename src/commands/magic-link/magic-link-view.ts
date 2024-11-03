@@ -6,7 +6,10 @@ import { MagicLinkListEmbed } from "../../templates/components/Embeds/MagicLinkL
 export const MagicLinkViewSubcommand: SlashCommandSubcommand = {
 	slashCommandBuilder: new SlashCommandSubcommandBuilder()
 		.setName("view")
-		.setDescription("View a magic links"),
+		.setDescription("View a magic links")
+        .setDescriptionLocalizations({
+            th: "ดูรายการ Magic Link ทั้งหมด"
+        }),
 
 	async onCommandExecuted(interaction) {
 		if (!interaction.guild) {
