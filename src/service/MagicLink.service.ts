@@ -35,3 +35,11 @@ export async function getMagicLinkListByCodeList(codeList: string[]) {
         }
     })
 }
+
+export async function deleteMagicLinkByCode(code: string) {
+    return prisma.magicLink.delete({
+        where: {
+            code
+        }
+    })
+}
