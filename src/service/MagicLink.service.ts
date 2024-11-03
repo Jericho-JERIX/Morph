@@ -19,7 +19,7 @@ export async function createMagicLink(payload: {
 }
 
 export async function getMagicLinkByCode(code: string) {
-    return prisma.magicLink.findFirst({
+    return prisma.magicLink.findUnique({
         where: {
             code
         }

@@ -63,7 +63,7 @@ model MagicLink {
     id                  Int         @id @default(autoincrement())
     guildId             String
     userId              String
-    code                String
+    code                String      @unique
     invitationLink      String      @unique
     roleId              String
     createdAt           DateTime    @default(now())
