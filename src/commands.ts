@@ -1,18 +1,22 @@
 import { Bind } from "./commands/bind";
 import { MagicLink } from "./commands/magic-link";
-import { MagicLinkCreate } from "./commands/magic-link-create";
 import { Morph } from "./commands/morph";
 import { Unbind } from "./commands/unbind";
 import { UploadGuildMembersRoles } from "./commands/upload-guild-members-roles";
 import { UserBindingGroup } from "./commands/user-binding-group";
-import { SlashCommand } from "./scripts/types/SlashCommand";
+import {
+    SlashCommand,
+    SlashCommandV2,
+} from "./scripts/types/SlashCommand";
 
-export const slashCommands: SlashCommand[] = [
+export const slashCommands: (
+	| SlashCommand
+	| SlashCommandV2
+)[] = [
 	Bind,
-    Unbind,
+	Unbind,
 	UploadGuildMembersRoles,
-    Morph,
-    UserBindingGroup,
-    MagicLink,
-    MagicLinkCreate,
+	Morph,
+	UserBindingGroup,
+	MagicLink,
 ];

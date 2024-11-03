@@ -8,13 +8,14 @@ import {
 	StringSelectMenuInteraction,
 	UserSelectMenuInteraction,
 	AutocompleteInteraction,
+    SlashCommandBuilder,
+    SlashCommandSubcommandBuilder,
+    SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js";
-export type SlashCommand = {
-	name: string;
-	description: string;
-	options: SlashCommandOption[];
 
-	onCommandExecuted: (
+
+export interface SlashCommandBase {
+    onCommandExecuted: (
 		interaction: ChatInputCommandInteraction
 	) => Promise<void>;
 	onButtonPressed?: (interaction: ButtonInteraction) => Promise<void>;
@@ -24,4 +25,18 @@ export type SlashCommand = {
 	onAutoCompleteInputed?: (
 		interaction: AutocompleteInteraction
 	) => Promise<void>;
+}
+
+export interface SlashCommand extends SlashCommandBase {
+	name: string;
+	description: string;
+	options: SlashCommandOption[];
+};
+
+export interface SlashCommandV2 extends SlashCommandBase {
+	slashCommandBuilder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder
+};
+
+export interface SlashCommandSubcommand extends SlashCommandBase {
+	slashCommandBuilder: SlashCommandSubcommandBuilder
 };
